@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>DashBoard Linha de Montagem de Chassi e Carroceria</title>
+	<meta http-equiv="refresh" content="60">
+    <meta name="viewport" content="width=device-width, initial-scale=1" >	
+
+	
+	<!-- css jquery -->
+    <link rel="stylesheet" href="/products/Custom/Setores Troller/ExternalViewer/Frameworks/jQuery-UI-1-12/jquery-ui.css">
+    <link rel="stylesheet" href="/products/Custom/Setores Troller/ExternalViewer/Frameworks/jQuery-UI-1-12/jquery-ui.theme.css">
+	
+	<!--  bootstrap -->
+	<link rel="stylesheet" href="-1895799125">
+	<link rel="stylesheet" href="-1895799126">
+    <link rel="stylesheet" href="-1895799127">
+
+
+	<!-- script jquery -->
+    <script src="-1895799122"></script>	
+	<script src="-1895799133"></script>
+	<script src="-1895799135"></script>	
+	<script src="/products/Custom/Setores Troller/ExternalViewer/utils/token.js" type="text/javascript"></script>
+
+	<script language="javascript" type="text/javascript">
+		
+		$(document).bind("contextmenu",function(e){
+			return false;
+		});
+
+
+		$(document).ready(function () {
+			
+            var _dialogs = ['dialog_fem0','dialog_fem1', 'dialog_fem2','dialog_fem3', 'dialog_fem4', 'dialog_fem5']
+
+            $.each(_dialogs, function( index, value ) {
+
+    		      $( '#'+value ).dialog({
+    				autoOpen: false,
+    				width: 600	
+    			 });
+    			
+    			
+    			 $('#'+value).hover(
+				    function() {
+					   $( this ).addClass( "ui-state-hover" );
+				    },
+				    function() {
+					   $( this ).removeClass( "ui-state-hover" );
+				    }
+			     );	
+
+
+                 	
+            });
+
+            $('#fem0').hover(
+				    function() {
+					   $( this ).addClass( "ui-state-hover" );
+				    },
+				    function() {
+					   $( this ).removeClass( "ui-state-hover" );
+				    }
+			     );	
+
+            var _fems = ['fem0','fem1', 'fem2','fem3', 'fem4', 'fem5']
+
+            $.each(_fems, function( index, value ) {
+            	$( "#"+value ).click(function(){
+				    $( "#"+_dialogs[index] ).dialog( "open" );
+				    event.preventDefault();
+			     });
+            });	
+							
+		    $.ajax({
+                url: "https://hts.troller.com.br:4435/api/api-troller/lmch060",
+                type: "GET",
+				data:{token: getToken()},
+                success: function  (_json) {
+					fem = [];
+					
+					var espaco = '&nbsp;';
+					$.each(_json, function(i, item){
+						if ( i>5 ){
+							$("#maisDe5").html("<h1> Foram localizadas mais de de 6 FEM's neste fluxo! Favor informar ao Team Lider!");
+						}else{
+							var posto = '# '+(i+1)
+							if ( i== 5){
+								posto = 'Encarroçar'
+							}
+							
+                        							
+						    var _htmlDialogo = '';	
+							var _html='';
+
+                            _html = '<div id="fem_'+i+'" class="jumbotron">';
+							
+                            _html+= '<span class="badge">'+posto+ espaco.repeat(5) +' </span>';
+							_html+= '<p>&nbsp;</p>';
+							_html+= '<p>FEM: <b>'+item.fem+'</b></p>';
+							_html+= '<p>Transmissão: <b>'+item.tipoTransmissao+'</b></p>';
+							_html+= '<p>Catálogo: <b>'+item.catalogo+'</b> </p>';
+                            _html+= '<p>Modelo: <b>'+item.modelo+'</b></p>';								
+
+ 							_html+= '<p>Carroceria: <b>'+item.carroceria+'</b> </p>';								
+																
+                            if (item.chassi){
+								_html+= '<p>Chassi: <b>'+item.chassi+'</b></p>';
+							} else{
+								_html+='<p>&nbsp;</p>';
+							}
+								
+
+                           _htmlDialogo = _html
+
+							_html+= '<p>&nbsp;</p>';
+							_html+= '<p>&nbsp;</p>';
+							
+							_html+='</div>';
+								
+
+							_htmlDialogo += '<p>Cor Carroceria: <b>'+item.corCarroceria+'</b> </p>';	
+							_htmlDialogo += '<p>Cor Capota: <b>'+item.corCapo+'</b> </p>';	
+							_htmlDialogo += '<p>Ano Modelo: <b>'+item.anoMod+'</b> </p>';	
+							_htmlDialogo += '<p>Ano Fabricação: <b>'+item.anoFab+'</b> </p>';
+							_htmlDialogo += '<p>Data/hora: <b>'+item.dataAlteracao+'</b> </p>';
+
+                            _htmlDialogo += '<p>host: <b>'+item.host+'</b> </p>';
+                            	
+		                    _htmlDialogo+='</div>';
+							
+								
+							$("#fem"+i).html( _html );
+							
+							$("#dialog_fem"+i).html( _htmlDialogo);
+							
+							$( "#dialog_fem"+i ).attr( "title", "FEM "+item.fem );
+							
+						};
+					})
+                    					
+                }, error: function (request, status, erro) {
+                    var item = JSON.parse(request.responseText);
+                    alert("Ocorreu um erro ao conectar ao servidor! Descrição do erro: " + item.erro);
+
+                }
+            	
+			});
+
+        });	
+		
+
+	</script>
+	
+</head>
+<body>	
+
+<div class="container">
+    <div class="row  linhaPersonalizada">
+        <div class="col-xs-11  col-sm-1 col-md-11 ">
+            <div class="page-header">
+                <h1>LM de Chassi e Encarroçamento - do 36 ao 38</h1>
+            </div>
+
+        </div>
+		<div class="col-xs-1  col-sm-1 col-md-1 ">
+            <div class="page-header">
+                 <div class="thumbnail">
+                        <img src="-1895832421" alt="Quadrado cinza escrito imagem 01">
+                 </div>
+            </div>
+
+        </div>
+	</div>
+</div>
+
+<div class="container">
+<div class="row"><strong>&nbsp;</strong> </div>
+    <div class="row">
+        <div id="fem0" class="col-xs-12 col-sm-2 col-md-4">
+		</div>
+        <div id="fem1" class="col-xs-12 col-sm-2 col-md-4">
+		</div>
+        <div id="fem2" class="col-xs-12 col-sm-2 col-md-4">
+		</div>
+	</div>
+	<div class="row"><strong>&nbsp;</strong> </div>
+	<div class="row">
+        <div id="fem3" class="col-xs-12 col-sm-2 col-md-4">
+		</div>
+        <div id="fem4" class="col-xs-12 col-sm-2 col-md-4">
+		</div>
+        <div id="fem5" class="col-xs-12 col-sm-2 col-md-4">
+		</div>
+	</div>
+	
+	<div class="row"><strong>&nbsp;</strong> </div>
+	<div class="row">
+        <div id="maisDe5" class="col-xs-12 col-sm-2 col-md-12 badge2">
+		</div>
+ 	</div>
+	
+	
+</div>
+
+<!-- ui-dialog -->
+<div id="dialog_fem0" title="Detalhes">
+</div>
+<div id="dialog_fem1" title="Detalhes">
+</div>
+<div id="dialog_fem2" title="Detalhes">
+</div>
+<div id="dialog_fem3" title="Detalhes">
+</div>
+<div id="dialog_fem4" title="Detalhes">
+</div>
+<div id="dialog_fem5" title="Detalhes">
+</div>
+
+
+</body>
+	
+</html>
